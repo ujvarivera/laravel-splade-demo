@@ -21,13 +21,22 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'Irodai dolgozó',
             'username' => 'testuser1',
             'card_number' => '543-232-142',
             'email' => 'test@demo.com',
             'role_id' => 1
         ]);
 
+        \App\Models\User::factory()->create([
+            'name' => 'Gyári dolgozó',
+            'username' => 'testuser2',
+            'card_number' => '666-555-444',
+            'email' => 'test@demo2.com',
+            'role_id' => 2
+        ]);
+
+        \App\Models\Customer::factory(5)->create();
 
     }
 }

@@ -5,13 +5,18 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 bg-white border-b border-gray-200">
-                    You're logged in!
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-panel>
+        <!---
+        <x-splade-modal>
+            You're logged in!
+        </x-splade-modal>
+        -->
+
+        <x-splade-defer url="https://api.quotable.io/random">
+            <p v-if="processing">Processing...</p>
+            <p v-text="response.content" class="text-xl"/>
+            <button @click="reload" class="bg-green-200 p-2 flex justify-center">Reload</button>
+        </x-splade-defer>
+    </x-panel>
+        
 </x-app-layout>
