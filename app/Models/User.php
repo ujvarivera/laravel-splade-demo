@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -21,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'username',
+        'card_number',
+        'roles_id'
     ];
 
     /**
@@ -42,4 +46,22 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the role associated with the user.
+     */
+    public function role(): BelongsTo
+    {
+        return $this->BelongsTo(Role::class);
+    }
+
+    public function canLoginToOfficeInterface()
+    {
+        return $this->role->name === 'irodai dolgozó';
+    }
+
+    public function canLoginToFactoryInterface()
+    {
+        return $this->role->name === 'gyári dolgozó';
+    }
 }
