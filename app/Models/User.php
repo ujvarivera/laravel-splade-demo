@@ -24,7 +24,7 @@ class User extends Authenticatable
         'password',
         'username',
         'card_number',
-        'roles_id'
+        'role_id'
     ];
 
     /**
@@ -57,11 +57,11 @@ class User extends Authenticatable
 
     public function canLoginToOfficeInterface()
     {
-        return $this->role->name === 'irodai dolgozó';
+        return $this->role->name === 'office worker';
     }
 
     public function canLoginToFactoryInterface()
     {
-        return $this->role->name === 'gyári dolgozó';
+        return $this->role->name === 'factory worker';
     }
 }

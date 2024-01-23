@@ -16,12 +16,12 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
         
         DB::table('roles')->insert([
-            ['name' => 'irodai dolgozó'],
-            ['name' => 'gyári dolgozó']
+            ['name' => 'office worker'],
+            ['name' => 'factory worker']
         ]);
 
         \App\Models\User::factory()->create([
-            'name' => 'Irodai dolgozó',
+            'name' => 'office worker',
             'username' => 'testuser1',
             'card_number' => '543-232-142',
             'email' => 'test@demo.com',
@@ -29,14 +29,18 @@ class DatabaseSeeder extends Seeder
         ]);
 
         \App\Models\User::factory()->create([
-            'name' => 'Gyári dolgozó',
+            'name' => 'factory worker',
             'username' => 'testuser2',
             'card_number' => '666-555-444',
             'email' => 'test@demo2.com',
             'role_id' => 2
         ]);
 
-        \App\Models\Customer::factory(5)->create();
-
+        \App\Models\Customer::factory(100)->create();
+        
+        DB::table('work_types')->insert([
+            ['name' => 'cutting'],
+            ['name' => 'painting']
+        ]);
     }
 }
