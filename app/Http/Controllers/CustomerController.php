@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use ProtoneMedia\Splade\Facades\Splade;
 use ProtoneMedia\Splade\Facades\Toast;
+use ProtoneMedia\Splade\SpladeTable;
 
 class CustomerController extends Controller
 {
@@ -15,9 +17,20 @@ class CustomerController extends Controller
     {
         abort_if(!auth()->user()->canLoginToOfficeInterface(), 403, __('Unauthorized action.'));
 
-        $customers = Customer::all();
+        // $customers = Customer::all();
 
-        return view('customers/index', compact('customers'));
+        return view('customers/index', [
+            // 'customers' => Splade::onLazy(fn () => Customer::latest()->limit(10)->get())
+            'customers' => SpladeTable::for(Customer::class)
+                ->defaultSort('created_at', 'desc')
+                ->withGlobalSearch(columns:['name', 'manager_name', 'phone_number'])
+                ->column('created_at', hidden:true)
+                ->column('name', sortable:true, searchable:true)
+                ->column('manager_name', sortable:true, searchable:true)
+                ->column('phone_number', sortable:true, searchable:true)
+                ->column('actions')
+                ->paginate(10),
+        ]);
     }
 
     /**
@@ -25,7 +38,9 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        //
+        abort_if(!auth()->user()->canLoginToOfficeInterface(), 403, __('Unauthorized action.'));
+
+        return view('customers/create');
     }
 
     /**
@@ -33,7 +48,25 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        abort_if(!auth()->user()->canLoginToOfficeInterface(), 403, __('Unauthorized action.'));
+
+        $validated = $request->validate([
+            'code' => ['required', 'unique:customers'],
+            'name' => ['required', 'string', 'max:100'],
+            'manager_name' => ['required', 'string', 'max:100'],
+            'phone_number' => ['required'],
+            'country' => ['required'],
+            'city' => ['required'],
+            'street' => ['required'],
+            'street_number' => ['required']
+        ]);
+
+        $customer = Customer::create($validated);
+
+        Toast::title(__('New Customer added!'));
+
+        return redirect()->route('customers.edit', $customer);
+
     }
 
     /**
@@ -59,6 +92,8 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer)
     {
+        abort_if(!auth()->user()->canLoginToOfficeInterface(), 403, __('Unauthorized action.'));
+
         $validated = $request->validate([
             'code' => ['required'],
             'name' => ['required', 'string', 'max:100'],
@@ -72,7 +107,7 @@ class CustomerController extends Controller
 
         $customer->update($validated);
 
-        Toast::title('The customer was updated!');
+        Toast::title(__('The customer was updated!'));
 
         return redirect()->route('customers.edit', $customer);
     }
@@ -82,6 +117,12 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer)
     {
-        //
+        abort_if(!auth()->user()->canLoginToOfficeInterface(), 403, __('Unauthorized action.'));
+
+        $customer->delete();
+
+        Toast::title(__('The customer was deleted!'));
+
+        return redirect()->route('customers.index');
     }
 }
